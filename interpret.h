@@ -1,6 +1,8 @@
-#ifndef interprete_h
-#define interprete_h
+#ifndef INTERPRET_H
+#define INTERPRET_H
 
-void interpret (const char *source) ;
+void iniciar();
+void finalizar();
+void interpret(const char *source);
 
 #endif
