@@ -9,16 +9,16 @@ struct stack {
 };
 
 Stack *new_stack(int size) {
-    Stack *s = (Stack *)malloc(sizeof(Stack));
-    if (!s) return NULL;
+    Stack *stack  = (Stack *)malloc(sizeof(Stack));
+    if (!stack) return NULL;
     s->values = (int *)malloc(size * sizeof(int));
     if (!s->values) {
-        free(s);
+        free(stack);
         return NULL;
     }
     s->top = -1;
     s->capacity = size;
-    return s;
+    return stack;
 }
 
 void free_stack(Stack* s) {
