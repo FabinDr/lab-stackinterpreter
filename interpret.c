@@ -1,111 +1,78 @@
+#include "interpret.h"
+#include "lista.h"
+#include "stack.h"
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include "stack.h"
-#include "lista.h"
 
-#include "interpret.h"
+static Stack* s = NULL;
+static List* l = NULL;
 
-static Stack *stack = NULL;
+void iniciar() {
+    s = new_stack(100);
+    l = new_list();
+}
 
-void interpret(const char *source)
-{
-    int numero1, numero2;
+void finalizar() {
+    free_stack(s);
+    free_list(l);
+}
 
-    if (stack == NULL)
-    {
-        stack = new_stack(100);
-    }
-
+void interpret(const char* source) {
     char op[10];
-    char arg[10];
+    char arg[50] = {0};
+    sscanf(source, "%9s %49s", op, arg);
 
-    sscanf(source, "%s%s", op, arg);
+    if (strcmp(op, "push") == 0) {
+        int value;
+        char *endptr;
+        value = strtol(arg, &endptr, 10);
 
-    if (strcmp(op, "push") == 0)
-    {
-        int value = atoi(arg);
-        stack_push(stack, value);
-    }
-    else if (strcmp(op, "add") == 0)
-    {
-        numero1 = stack_pop(stack);
-        numero2 = stack_pop(stack);
-
-        if (numero1 == -1 || numero2 == -1)
-        {
-            printf("Erro: pilha com menos de 2 elementos.\n");
-
+        if (strlen(arg) == 0) {
+            printf("Uso: push <valor | nome_variavel>\n");
             return;
         }
-        int resultado = numero1 + numero2;
 
-        stack_push(stack, resultado);
-    }
-
-    else if (strcmp(op, "sub") == 0)
-    {
-        numero1 = stack_pop(stack);
-        numero2 = stack_pop(stack);
-
-        if (numero1 == -1 || numero2 == -1)
-        {
-            printf("Erro: pilha com menos de 2 elementos.\n");
-
-            return;
+        if (*endptr == '\0') { // Se strtol consumiu a string inteira, é um número.
+            stack_push(s, value);
+        } else { // Senão, é um nome de variável.
+            int found;
+            int var_value = get_variable(l, arg, &found);
+            if (found) {
+                stack_push(s, var_value);
+            } else {
+                printf("Erro: Variavel '%s' nao encontrada.\n", arg);
+            }
         }
-        int resultado = numero2 - numero1;
-        stack_push(stack, resultado);
-    }
-    else if (strcmp(op, "mul") == 0)
-    {
-        numero1 = stack_pop(stack);
-        numero2 = stack_pop(stack);
-
-        if (numero1 == -1 || numero2 == -1)
-        {
-            printf("Erro: pilha com menos de 2 elementos.\n");
-
-            return;
+    } else if (strcmp(op, "pop") == 0) {
+        if (arg[0] == '\0') {
+             printf("Uso: pop <nome_variavel>\n");
+             return;
         }
-        int resultado = numero1 * numero2;
-
-        stack_push(stack, resultado);
-    }
-
-    else if (strcmp(op, "pop") == 0)
-    {
-        int value = stack_pop(stack);
-        if (value != -1)
-            printf("Valor desempilhado: %d\n", value);
-    }
-
-    else if (strcmp(op, "div") == 0)
-    {
-        numero1 = stack_pop(stack);
-        numero2 = stack_pop(stack);
-
-        if (numero1 == -1 || numero2 == -1)
-        {
-            printf("Erro: pilha com menos de 2 elementos.\n");
-
-            return;
+        int value_from_stack = stack_pop(s);
+        if (value_from_stack == -1 && s->top < 0) { // Confirma que o -1 é de pilha vazia
+             printf("Erro: Pilha vazia, nao ha nada para 'pop'.\n");
+        } else {
+             set_variable(l, arg, value_from_stack);
         }
-        int resultado = (numero2 / numero1);
-        stack_push(stack, resultado);
-    }
-
-    else if (strcmp(op, "print") == 0)
-    {
-
-        stack_print(stack);
-    }
-
-
-
-    else
-    {
-        printf("Operação desconhecida: %s\n", op);
-        return;
+    } else if (strcmp(op, "add") == 0) {
+        int v2 = stack_pop(s);
+        int v1 = stack_pop(s);
+        stack_push(s, v1 + v2);
+    } else if (strcmp(op, "sub") == 0) {
+        int v2 = stack_pop(s);
+        int v1 = stack_pop(s);
+        stack_push(s, v1 - v2);
+    } else if (strcmp(op, "print") == 0) {
+        int val = stack_pop(s);
+        if (val == -1 && s->top < 0) {
+             printf("Erro: Pilha vazia, nao ha nada para 'print'.\n");
+        } else {
+             printf("Saida: %d\n", val);
+        }
+    } else if (strcmp(op, "vars") == 0) {
+        print_variables(l);
+    } else {
+        printf("Erro: Comando desconhecido '%s'.\n", op);
     }
 }
