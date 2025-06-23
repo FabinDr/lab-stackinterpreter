@@ -4,7 +4,7 @@
 typedef struct stack Stack;
 
 Stack* new_stack(int size);
-void free_stack(Stack* s); // Adicionando a função de liberar
+void free_stack(Stack* s);
 void stack_push(Stack* s, int value);
 int stack_pop (Stack* s);
 void stack_print(Stack* s);
