@@ -1,35 +1,35 @@
+#include "interpret.h"
 #include <stdio.h>
 #include <string.h>
-#include "interpret.h"
 
-static void repl()
-{
-  char line[1024];
-  for (;;)
-  {
-    printf("> ");
+#define MAX_INPUT 100
 
-    if (!fgets(line, sizeof(line), stdin))
-    {
-      printf("\n");
-      break;
+int main() {
+    char input[MAX_INPUT];
+    
+    iniciar(); // Inicializa a pilha e a lista
+
+    printf("Maquina de Pilha Interativa. Digite 'quit' para sair.\n");
+
+    while (1) {
+        printf("> ");
+        if (fgets(input, MAX_INPUT, stdin) == NULL) {
+            printf("\n");
+            break;
+        }
+
+        input[strcspn(input, "\n")] = 0;
+
+        if (strcmp(input, "quit") == 0 || strcmp(input, "exit") == 0) {
+            break;
+        }
+
+        if (strlen(input) > 0) {
+            interpret(input);
+        }
     }
 
-    line[strcspn(line, "\n")] = '\0';
-
-    if (strcmp(line, "exit") == 0)
-    {
-      printf("Encerrando o interpretador...\n");
-      break;
-    }
-
-    interpret(line);
-  }
-}
-
-int main()
-{
-
-  repl();
-  return 0;
+    finalizar(); // Libera toda a memória antes de sair
+    printf("Programa encerrado.\n");
+    return 0;
 }
