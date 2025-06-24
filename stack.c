@@ -21,35 +21,35 @@ Stack *new_stack(int size) {
     return stack;
 }
 
-void free_stack(Stack* s) {
-    if (s != NULL) {
+void free_stack(Stack* stack) {
+    if (stack != NULL) {
         free(s->values);
         free(s);
     }
 }
 
-void stack_push(Stack *s, int value) {
-    if (s->top >= s->capacity - 1) {
+void stack_push(Stack *stack, int value) {
+    if (stack->top >= s->capacity - 1) {
         printf("Erro: Pilha cheia (stack overflow)!\n");
         return;
     }
-    s->values[++s->top] = value;
+    s->values[++stack->top] = value;
 }
 
-int stack_pop(Stack *s) {
-    if (s->top < 0) {
+int stack_pop(Stack *stack) {
+    if (stack->top < 0) {
         return -1; // Retorna -1 para sinalizar erro (pilha vazia)
     }
-    return s->values[(s->top)--];
+    return stack->values[(s->top)--];
 }
 
-void stack_print(Stack *s) {
-    if (s->top < 0) {
+void stack_print(Stack *stack) {
+    if (stack->top < 0) {
         printf("Pilha: [ Vazia ]\n");
         return;
     }
     printf("Pilha: [ ");
-    for (int i = 0; i <= s->top; i++) {
+    for (int i = 0; i <= stack->top; i++) {
         printf("%d ", s->values[i]);
     }
     printf("] <- topo\n");
