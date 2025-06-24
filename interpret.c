@@ -65,7 +65,7 @@ void interpret(const char* source) {
         stack_push(stack, v1 - v2);
     } else if (strcmp(op, "print") == 0) {
         int val = stack_pop(stack);
-        if (val == -1 && stack ->top < 0) {
+        if (val == -1 && stack->top < 0) {
              printf("Erro: Pilha vazia, nao ha nada para 'print'.\n");
         } else {
              printf("Saida: %d\n", val);

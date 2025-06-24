@@ -1,5 +1,5 @@
-#ifndef STACK_H
-#define STACK_H
+#ifndef stack_h
+#define stack_h
 
 typedef struct stack Stack;
 

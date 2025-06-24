@@ -11,25 +11,25 @@ struct stack {
 Stack *new_stack(int size) {
     Stack *stack  = (Stack *)malloc(sizeof(Stack));
     if (!stack) return NULL;
-    s->values = (int *)malloc(size * sizeof(int));
-    if (!s->values) {
+    stack->values = (int *)malloc(size * sizeof(int));
+    if (!stack->values) {
         free(stack);
         return NULL;
     }
-    s->top = -1;
-    s->capacity = size;
+    stack->top = -1;
+    stack->capacity = size;
     return stack;
 }
 
 void free_stack(Stack* stack) {
     if (stack != NULL) {
-        free(s->values);
-        free(s);
+        free(stack->values);
+        free(stack);
     }
 }
 
 void stack_push(Stack *stack, int value) {
-    if (stack->top >= s->capacity - 1) {
+    if (stack->top >= stack->capacity - 1) {
         printf("Erro: Pilha cheia (stack overflow)!\n");
         return;
     }
@@ -50,7 +50,7 @@ void stack_print(Stack *stack) {
     }
     printf("Pilha: [ ");
     for (int i = 0; i <= stack->top; i++) {
-        printf("%d ", s->values[i]);
+        printf("%d ", stack->values[i]);
     }
     printf("] <- topo\n");
 }
