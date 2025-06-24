@@ -59,7 +59,7 @@ void interpret(const char* source) {
         int v2 = stack_pop(stack);
         int v1 = stack_pop(stack);
         stack_push(stack, v1 + v2);
-    } else if (strcmp(op, "sub") == 0) {
+    } else if (strcmp(op, "div") == 0) {
         int v2 = stack_pop(stack);
         int v1 = stack_pop(stack);
         stack_push(stack, v1 - v2);
