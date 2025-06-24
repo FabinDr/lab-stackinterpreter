@@ -2,12 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct stack {
-    int *values;
-    int capacity;
-    int top;
-};
-
 Stack *new_stack(int size) {
     Stack *stack  = (Stack *)malloc(sizeof(Stack));
     if (!stack) return NULL;
@@ -33,14 +27,14 @@ void stack_push(Stack *stack, int value) {
         printf("Erro: Pilha cheia (stack overflow)!\n");
         return;
     }
-    s->values[++stack->top] = value;
+    stack->values[++stack->top] = value;
 }
 
 int stack_pop(Stack *stack) {
     if (stack->top < 0) {
         return -1; // Retorna -1 para sinalizar erro (pilha vazia)
     }
-    return stack->values[(s->top)--];
+    return stack->values[(stack->top)--];
 }
 
 void stack_print(Stack *stack) {
