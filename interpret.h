@@ -1,5 +1,5 @@
-#ifndef INTERPRET_H
-#define INTERPRET_H
+#ifndef interprete_h
+#define interprete_h
 
 void iniciar();
 void finalizar();
