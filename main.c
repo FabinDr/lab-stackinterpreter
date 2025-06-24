@@ -1,35 +1,50 @@
-#include "interpret.h"
+#include "stack.h"
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
 
-#define MAX_INPUT 100
-
-int main() {
-    char input[MAX_INPUT];
-    
-    iniciar(); // Inicializa a pilha e a lista
-
-    printf("Maquina de Pilha Interativa. Digite 'quit' para sair.\n");
-
-    while (1) {
-        printf("> ");
-        if (fgets(input, MAX_INPUT, stdin) == NULL) {
-            printf("\n");
-            break;
-        }
-
-        input[strcspn(input, "\n")] = 0;
-
-        if (strcmp(input, "quit") == 0 || strcmp(input, "exit") == 0) {
-            break;
-        }
-
-        if (strlen(input) > 0) {
-            interpret(input);
-        }
+Stack *new_stack(int size) {
+    Stack *stack  = (Stack *)malloc(sizeof(Stack));
+    if (!stack) return NULL;
+    stack->values = (int *)malloc(size * sizeof(int));
+    if (!stack->values) {
+        free(stack);
+        return NULL;
     }
+    stack->top = -1;
+    stack->capacity = size;
+    return stack;
+}
 
-    finalizar(); // Libera toda a memória antes de sair
-    printf("Programa encerrado.\n");
-    return 0;
+void free_stack(Stack* stack) {
+    if (stack != NULL) {
+        free(stack->values);
+        free(stack);
+    }
+}
+
+void stack_push(Stack *stack, int value) {
+    if (stack->top >= stack->capacity - 1) {
+        printf("Erro: Pilha cheia (stack overflow)!\n");
+        return;
+    }
+    stack->values[++stack->top] = value;
+}
+
+int stack_pop(Stack *stack) {
+    if (stack->top < 0) {
+        return -1; // Retorna -1 para sinalizar erro (pilha vazia)
+    }
+    return stack->values[(stack->top)--];
+}
+
+void stack_print(Stack *stack) {
+    if (stack->top < 0) {
+        printf("Pilha: [ Vazia ]\n");
+        return;
+    }
+    printf("Pilha: [ ");
+    for (int i = 0; i <= stack->top; i++) {
+        printf("%d ", stack->values[i]);
+    }
+    printf("] <- topo\n");
 }
