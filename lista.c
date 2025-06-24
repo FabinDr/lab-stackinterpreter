@@ -1,6 +1,9 @@
-#include <stdio.h>
+// lista.c
+
+#include "lista.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 typedef struct Variavel {
     char nome[50];
@@ -8,10 +11,29 @@ typedef struct Variavel {
     struct Variavel* proximo;
 } Variavel;
 
-static Variavel* lista_de_variaveis = NULL;
+struct list {
+    Variavel* head;
+};
 
-void store_variavel(const char* nome, int valor) {
-    Variavel* atual = lista_de_variaveis;
+List* new_list() {
+    List* l = malloc(sizeof(List));
+    if (!l) return NULL;
+    l->head = NULL;
+    return l;
+}
+
+void free_list(List* l) {
+    Variavel* atual = l->head;
+    while (atual != NULL) {
+        Variavel* proximo = atual->proximo;
+        free(atual);
+        atual = proximo;
+    }
+    free(l);
+}
+
+void set_variable(List* l, const char* nome, int valor) {
+    Variavel* atual = l->head;
     while (atual != NULL) {
         if (strcmp(atual->nome, nome) == 0) {
             atual->valor = valor;
@@ -19,38 +41,29 @@ void store_variavel(const char* nome, int valor) {
         }
         atual = atual->proximo;
     }
-
-    Variavel* nova_var = malloc(sizeof(Variavel));
-    if (nova_var == NULL) {
-        fprintf(stderr, "ERRO: Falha ao alocar memoria.\n");
-        exit(EXIT_FAILURE);
-    }
-    
-    strncpy(nova_var->nome, nome, sizeof(nova_var->nome) - 1);
-    nova_var->nome[sizeof(nova_var->nome) - 1] = '\0';
-
-    nova_var->valor = valor;
-    nova_var->proximo = lista_de_variaveis;
-    lista_de_variaveis = nova_var;
+    Variavel* nova = malloc(sizeof(Variavel));
+    strncpy(nova->nome, nome, sizeof(nova->nome) - 1);
+    nova->nome[sizeof(nova->nome) - 1] = '\0';
+    nova->valor = valor;
+    nova->proximo = l->head;
+    l->head = nova;
 }
 
-Variavel* load_variavel(const char* nome) {
-    Variavel* atual = lista_de_variaveis;
+int get_variable(List* l, const char* nome, int* found) {
+    Variavel* atual = l->head;
     while (atual != NULL) {
         if (strcmp(atual->nome, nome) == 0) {
-            return atual;
+            *found = 1;
+            return atual->valor;
         }
         atual = atual->proximo;
     }
-    return NULL;
+    *found = 0;
+    return -1;
 }
 
-int variavel_exist(const char* nome) {
-    return load_variavel(nome) != NULL;
-}
-
-void print_all_variables() {
-    Variavel* atual = lista_de_variaveis;
+void print_variables(List* l) {
+    Variavel* atual = l->head;
     if (atual == NULL) {
         printf("Nenhuma variavel na memoria.\n");
         return;
@@ -61,15 +74,4 @@ void print_all_variables() {
         atual = atual->proximo;
     }
     printf("----------------------------\n");
-}
-
-void free_all_variables() {
-    Variavel* atual = lista_de_variaveis;
-    Variavel* proximo;
-    while (atual != NULL) {
-        proximo = atual->proximo;
-        free(atual);
-        atual = proximo;
-    }
-    lista_de_variaveis = NULL;
 }
